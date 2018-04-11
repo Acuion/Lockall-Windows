@@ -36,10 +36,13 @@ namespace Lockall_Windows
             }
 
             var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
+            var secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
 
             var result = new List<byte>();
             result.AddRange(BitConverter.GetBytes(firstComponent.Length));
             result.AddRange(firstComponent);
+            result.AddRange(BitConverter.GetBytes(secondComponent.Length));
+            result.AddRange(secondComponent);
             result.AddRange(localIp);
             result.AddRange(BitConverter.GetBytes(listeningAtPort));
             result.AddRange(Encoding.UTF8.GetBytes(Environment.UserName));
