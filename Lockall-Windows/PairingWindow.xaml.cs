@@ -31,7 +31,7 @@ namespace Lockall_Windows
                 listener.Start();
                 ImageQr.Dispatcher.Invoke(() =>
                 {
-                    ImageQr.Source = QrBuilder.CreateQrFromBytes(
+                    ImageQr.Source = QrBuilder.CreateQrFromBytes("PAIRING",
                         PairingManager.MakeDataForPairing(((IPEndPoint)listener.LocalEndpoint).Port));
                 });
                 var client = listener.AcceptTcpClient();

@@ -11,11 +11,11 @@ namespace Lockall_Windows
 {
     static class QrBuilder
     {
-        public static BitmapImage CreateQrFromBytes(byte[] source)
+        public static BitmapImage CreateQrFromBytes(string prefix, byte[] source)
         {
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
-                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("LOCKALL:" + Convert.ToBase64String(source), QRCodeGenerator.ECCLevel.Q))
+                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("LOCKALL:" + prefix + ":" + Convert.ToBase64String(source), QRCodeGenerator.ECCLevel.Q))
                 {
                     using (QRCode qrCode = new QRCode(qrCodeData))
                     {
