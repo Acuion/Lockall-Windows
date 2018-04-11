@@ -17,21 +17,12 @@ namespace Lockall_Windows
 {
     internal static class PairingManager
     {
-        // gen key, get local ip, get machine name
-        // show qr
-        // listen to connections
-
-        public static void PreparePairingData(out byte[] aes256Key, out byte[] localIp, out string userName)
+        public static byte[] MakeDataForPairing(int listeningAtPort)
         {
-            using (var keyGeneratorIsntance = new RijndaelManaged())
-            {
-                keyGeneratorIsntance.GenerateKey();
-                aes256Key = keyGeneratorIsntance.Key;
-            }
-
+            byte[] localIp;
             try
             {
-                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+                using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
                 {
                     socket.Connect("8.8.8.8", 65530); // todo: local
                     IPEndPoint endPoint = (IPEndPoint)socket.LocalEndPoint;
@@ -40,106 +31,20 @@ namespace Lockall_Windows
             }
             catch
             {
-                localIp = null;
+                //todo: failed
+                return null;
             }
 
-            userName = System.Environment.UserName;
+            var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
+
+            var result = new List<byte>();
+            result.AddRange(BitConverter.GetBytes(firstComponent.Length));
+            result.AddRange(firstComponent);
+            result.AddRange(localIp);
+            result.AddRange(BitConverter.GetBytes(listeningAtPort));
+            result.AddRange(Encoding.UTF8.GetBytes(Environment.UserName));
+
+            return result.ToArray();
         }
-
-        public static BitmapImage CreateAuthQr(byte[] aes256Key, byte[] localIp, string userName)
-        {
-            List<byte> toBase64 = new List<byte>();
-            toBase64.AddRange(aes256Key); // 32 bytes
-            toBase64.AddRange(localIp);
-            toBase64.AddRange(Encoding.UTF8.GetBytes(userName));
-
-            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-            {
-                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("LOCKALL:" + Convert.ToBase64String(toBase64.ToArray()), QRCodeGenerator.ECCLevel.Q))
-                {
-                    using (QRCode qrCode = new QRCode(qrCodeData))
-                    {
-                        using (MemoryStream memory = new MemoryStream())
-                        {
-                            qrCode.GetGraphic(20).Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                            memory.Position = 0;
-                            BitmapImage bitmapimage = new BitmapImage();
-                            bitmapimage.BeginInit();
-                            bitmapimage.StreamSource = memory;
-                            bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmapimage.EndInit();
-
-                            return bitmapimage;
-                        }
-                    }
-                }
-            }
-        }
-
-        // todo: move from the pairing manager
-        public static void ScanTheNetwork(string localIp)
-        {
-            // TODO
-            var localAddr = IPAddress.Parse(localIp);
-            var mask = GetSubnetMask(localAddr).GetAddressBytes();
-
-            var localBytes = localAddr.GetAddressBytes();
-
-            int incrbleMask = 0, subnetMask = 0;
-
-            for (int i = 0; i < 4; ++i)
-            {
-                subnetMask |= (byte)(mask[i] & localBytes[i]) << ((3 - i) * 8);
-                incrbleMask |= (byte)(~mask[i]) << ((3 - i) * 8);
-            }
-
-            var tc = new TcpClient();
-
-            int ipInc = 0;
-            int ipTo = 0;
-            while ((ipTo & incrbleMask) == ipTo)
-                ipTo++;
-            ipTo--;
-            ConcurrentQueue<IPAddress> failed = new ConcurrentQueue<IPAddress>();
-            Parallel.For(ipInc, ipTo, (ip, loopState) =>
-            {
-                int ipToScanAsInt = ip | subnetMask;
-
-                var ipToScan = new IPAddress(new[]
-                {
-                    (byte) ((ipToScanAsInt & 0xFF000000) >> 24), (byte) ((ipToScanAsInt & 0xFF0000) >> 16),
-                    (byte) ((ipToScanAsInt & 0xFF00) >> 8), (byte) (ipToScanAsInt & 0xFF)
-                });
-
-                var client = new TcpClient();
-                if (client.ConnectAsync(ipToScan, 42424).Wait(1000))
-                {
-                    loopState.Break();
-                }
-                else
-                {
-                    failed.Enqueue(ipToScan);
-                }
-            });
-        }
-
-        private static IPAddress GetSubnetMask(IPAddress address)
-        {
-            foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                foreach (UnicastIPAddressInformation unicastIPAddressInformation in adapter.GetIPProperties().UnicastAddresses)
-                {
-                    if (unicastIPAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        if (address.Equals(unicastIPAddressInformation.Address))
-                        {
-                            return unicastIPAddressInformation.IPv4Mask;
-                        }
-                    }
-                }
-            }
-            throw new ArgumentException($"Can't find subnetmask for IP address '{address}'"); // todo: catch
-        }
-
     }
 }

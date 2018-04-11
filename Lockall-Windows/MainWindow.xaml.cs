@@ -26,13 +26,7 @@ namespace Lockall_Windows
         {
             InitializeComponent();
 
-            PairingManager.PreparePairingData(out byte[] aes, out byte[] local, out string mn);
-            if (local == null)
-            {
-                // oops
-            }
-
-            ImageQr.Source = PairingManager.CreateAuthQr(aes, local, mn);
+            new PairingWindow().Show();
         }
     }
 }
