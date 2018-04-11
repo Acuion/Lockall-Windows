@@ -21,7 +21,7 @@ namespace Lockall_Windows
         // show qr
         // listen to connections
 
-        public static void PreparePairingData(out byte[] aes256Key, out string localIp, out string machineName)
+        public static void PreparePairingData(out byte[] aes256Key, out byte[] localIp, out string userName)
         {
             using (var keyGeneratorIsntance = new RijndaelManaged())
             {
@@ -35,7 +35,7 @@ namespace Lockall_Windows
                 {
                     socket.Connect("8.8.8.8", 65530); // todo: local
                     IPEndPoint endPoint = (IPEndPoint)socket.LocalEndPoint;
-                    localIp = endPoint.Address.ToString();
+                    localIp = endPoint.Address.GetAddressBytes();
                 }
             }
             catch
@@ -43,14 +43,15 @@ namespace Lockall_Windows
                 localIp = null;
             }
 
-            machineName = System.Environment.UserName;
+            userName = System.Environment.UserName;
         }
 
-        public static BitmapImage CreateAuthQr(byte[] aes256Key, string localIp, string machineName)
+        public static BitmapImage CreateAuthQr(byte[] aes256Key, byte[] localIp, string userName)
         {
             List<byte> toBase64 = new List<byte>();
-            toBase64.AddRange(aes256Key);
-            toBase64.AddRange(Encoding.UTF8.GetBytes(localIp + "~" + machineName));
+            toBase64.AddRange(aes256Key); // 32 bytes
+            toBase64.AddRange(localIp);
+            toBase64.AddRange(Encoding.UTF8.GetBytes(userName));
 
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {

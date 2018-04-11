@@ -26,7 +26,7 @@ namespace Lockall_Windows
         {
             InitializeComponent();
 
-            PairingManager.PreparePairingData(out byte[] aes, out string local, out string mn);
+            PairingManager.PreparePairingData(out byte[] aes, out byte[] local, out string mn);
             if (local == null)
             {
                 // oops
