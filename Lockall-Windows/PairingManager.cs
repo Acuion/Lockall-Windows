@@ -45,7 +45,7 @@ namespace Lockall_Windows
             result.AddRange(secondComponent);
             result.AddRange(localIp);
             result.AddRange(BitConverter.GetBytes(listeningAtPort));
-            result.AddRange(Encoding.UTF8.GetBytes(Environment.UserName));
+            result.AddRange(Encoding.UTF8.GetBytes(Environment.MachineName + "/" + Environment.UserName));
 
             return result.ToArray();
         }
