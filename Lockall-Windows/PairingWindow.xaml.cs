@@ -36,6 +36,7 @@ namespace Lockall_Windows
                 });
                 var client = listener.AcceptTcpClient();
                 listener.Stop();
+                MessageBox.Show("Wow");
             });
         }
     }

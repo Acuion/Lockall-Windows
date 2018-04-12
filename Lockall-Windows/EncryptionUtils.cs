@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Lockall_Windows
 {
@@ -14,9 +15,9 @@ namespace Lockall_Windows
             return new SHA256Managed().ComputeHash(concat.ToArray());
         }
 
-        public static byte[] EncryptDataWithAes256(string content, byte[] aes256Key)
+        public static string DecryptDataWithAes256(byte[] content, byte[] aes256Key, byte[] iv) // todo: check
         {
-            using (var aesEncryptor = new RijndaelManaged
+            using (var aesDecryptor = new RijndaelManaged
             {
                 KeySize = 256,
                 BlockSize = 128,
@@ -24,19 +25,17 @@ namespace Lockall_Windows
                 Padding = PaddingMode.PKCS7
             })
             {
-                aesEncryptor.GenerateIV();
+                var decryptor = aesDecryptor.CreateDecryptor(aes256Key, iv);
 
-                var encryptor = aesEncryptor.CreateEncryptor(aes256Key, aesEncryptor.IV);
-
-                using (var msEncrypt = new MemoryStream())
+                using (var msDecrypt = new MemoryStream())
                 {
-                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
                     {
-                        using (var swEcrypt = new StreamWriter(csEncrypt))
+                        using (var swEcrypt = new StreamWriter(csDecrypt))
                         {
                             swEcrypt.Write(content);
                         }
-                        return msEncrypt.ToArray();
+                        return Encoding.UTF8.GetString(msDecrypt.ToArray());
                     }
                 }
             }
