@@ -31,7 +31,7 @@ namespace Lockall_Windows
                 {
                     using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
                     {
-                        using (var swEcrypt = new StreamWriter(csDecrypt))
+                        using (var swEcrypt = new BinaryWriter(csDecrypt))
                         {
                             swEcrypt.Write(content);
                         }

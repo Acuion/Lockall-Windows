@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Lockall_Windows
 {
@@ -27,16 +28,27 @@ namespace Lockall_Windows
 
             Task.Run(() =>
             {
+                byte[] secondComponent = null;
+
                 var listener = new TcpListener(IPAddress.Any, 0);
                 listener.Start();
                 ImageQr.Dispatcher.Invoke(() =>
                 {
                     ImageQr.Source = QrBuilder.CreateQrFromBytes("PAIRING",
-                        PairingManager.MakeDataForPairing(((IPEndPoint)listener.LocalEndpoint).Port));
+                        PairingManager.MakeDataForPairing(((IPEndPoint)listener.LocalEndpoint).Port,
+                        out secondComponent));
                 });
                 var client = listener.AcceptTcpClient();
                 listener.Stop();
-                MessageBox.Show("Wow");
+                var inputStream = new BinaryReader(client.GetStream());
+                var msgLen = inputStream.ReadInt32();
+                var iv = inputStream.ReadBytes(16);
+                var msg = inputStream.ReadBytes(msgLen - 16); // todo: to a method
+
+                var key = EncryptionUtils.Produce256bitFromComponents(ComponentsManager.ComputeDeterminedFirstComponent(),
+                    secondComponent);
+                var decrypted = EncryptionUtils.DecryptDataWithAes256(msg, key, iv);
+                MessageBox.Show(decrypted);
             });
         }
     }

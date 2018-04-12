@@ -17,7 +17,7 @@ namespace Lockall_Windows
 {
     internal static class PairingManager
     {
-        public static byte[] MakeDataForPairing(int listeningAtPort)
+        public static byte[] MakeDataForPairing(int listeningAtPort, out byte[] secondComponent)
         {
             byte[] localIp;
             try
@@ -32,11 +32,12 @@ namespace Lockall_Windows
             catch
             {
                 //todo: failed
+                secondComponent = null;
                 return null;
             }
 
             var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
-            var secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
+            secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
 
             var result = new List<byte>();
             result.AddRange(BitConverter.GetBytes(firstComponent.Length));
