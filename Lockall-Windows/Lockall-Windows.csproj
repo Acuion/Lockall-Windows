@@ -64,6 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClientCommunication.cs" />
     <Compile Include="ComponentsManager.cs" />
     <Compile Include="QrBuilder.cs" />
     <Compile Include="PairingWindow.xaml.cs">

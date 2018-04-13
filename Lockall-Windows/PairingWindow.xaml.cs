@@ -30,25 +30,18 @@ namespace Lockall_Windows
             {
                 byte[] secondComponent = null;
 
-                var listener = new TcpListener(IPAddress.Any, 0);
-                listener.Start();
+                var comm = new ClientListener();
+                
                 ImageQr.Dispatcher.Invoke(() =>
                 {
                     ImageQr.Source = QrBuilder.CreateQrFromBytes("PAIRING",
-                        PairingManager.MakeDataForPairing(((IPEndPoint)listener.LocalEndpoint).Port,
+                        PairingManager.MakeDataForPairing(comm.ListensAtPort,
                         out secondComponent));
                 });
-                var client = listener.AcceptTcpClient();
-                listener.Stop();
-                var inputStream = new BinaryReader(client.GetStream());
-                var msgLen = inputStream.ReadInt32();
-                var iv = inputStream.ReadBytes(16);
-                var msg = inputStream.ReadBytes(msgLen - 16); // todo: to a method
 
-                var key = EncryptionUtils.Produce256bitFromComponents(ComponentsManager.ComputeDeterminedFirstComponent(),
-                    secondComponent);
-                var decrypted = EncryptionUtils.DecryptDataWithAes256(msg, key, iv);
-                MessageBox.Show(decrypted);
+                var rcv = comm.ReadAndDecryptClientMessageThenCloseListenerAsync(secondComponent).Result;
+
+                MessageBox.Show(rcv);
             });
         }
     }
