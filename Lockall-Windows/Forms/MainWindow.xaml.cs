@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Lockall_Windows
+namespace Lockall_Windows.Forms
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -26,7 +26,13 @@ namespace Lockall_Windows
         {
             InitializeComponent();
 
-            new PairingWindow().Show();
+            var pair = new QrDisplayerWindow();
+            pair.Show();
+            pair.ShowQrForAResult("PAIRING", QrContentBuilder.MakeDataForPairing(), true).ContinueWith((result) =>
+            {
+                MessageBox.Show(Encoding.UTF8.GetString(result.Result));
+            });
+            
         }
     }
 }
