@@ -33,9 +33,9 @@ namespace Lockall_Windows
         {
             var client = await _listener.AcceptTcpClientAsync();
             var inputStream = new BinaryReader(client.GetStream());
-            var msgLen = inputStream.ReadInt32();
             var iv = inputStream.ReadBytes(16);
-            var msg = inputStream.ReadBytes(msgLen - 16);
+            var msgLen = inputStream.ReadInt32();
+            var msg = inputStream.ReadBytes(msgLen);
 
             var key = EncryptionUtils.Produce256BitFromComponents(ComponentsManager.ComputeDeterminedFirstComponent(),
                 secondComponent);
