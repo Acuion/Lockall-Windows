@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -30,7 +31,16 @@ namespace Lockall_Windows.Forms
             pair.Show();
             pair.ShowQrForAResult("PAIRING", QrContentBuilder.MakeDataForPairing(), true).ContinueWith((result) =>
             {
-                MessageBox.Show(Encoding.UTF8.GetString(result.Result));
+                using (var ms = new MemoryStream(result.Result))
+                {
+                    using (var br = new BinaryReader(ms))
+                    {
+                        var namelen = br.ReadInt32();
+                        var name = new byte[namelen];
+                        br.Read(name, 0, namelen);
+                        MessageBox.Show(Encoding.UTF8.GetString(name));
+                    }
+                }
             });
             
         }
