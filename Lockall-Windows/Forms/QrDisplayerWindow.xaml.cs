@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Lockall_Windows.Forms
 {
@@ -27,7 +28,7 @@ namespace Lockall_Windows.Forms
             InitializeComponent();
         }
 
-        public async Task<byte[]> ShowQrForAResult(string prefix, byte[] qrUserContent, bool attachFirstComponent = false)
+        public async Task<string> ShowQrForAJsonResult(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
         {
             using (var comm = new ClientListener())
             {
@@ -56,7 +57,7 @@ namespace Lockall_Windows.Forms
                 var userData = new List<byte>();
                 userData.AddRange(comm.ListensAtIp);
                 userData.AddRange(BitConverter.GetBytes(comm.ListensAtPort));
-                userData.AddRange(qrUserContent);
+                userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
 
                 var encryptedUserData = EncryptionUtils.EncryptDataWithAes256(userData.ToArray(), key, iv);
 

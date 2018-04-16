@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Lockall_Windows.Messages.Pairing;
+using Newtonsoft.Json;
 
 namespace Lockall_Windows.Forms
 {
@@ -29,18 +31,11 @@ namespace Lockall_Windows.Forms
 
             var pair = new QrDisplayerWindow();
             pair.Show();
-            pair.ShowQrForAResult("PAIRING", QrContentBuilder.MakeDataForPairing(), true).ContinueWith((result) =>
+            pair.ShowQrForAJsonResult("PAIRING",
+                JsonConvert.SerializeObject(
+                    new MessageWithName(Environment.MachineName + "/" + Environment.UserName)), true).ContinueWith(result =>
             {
-                using (var ms = new MemoryStream(result.Result))
-                {
-                    using (var br = new BinaryReader(ms))
-                    {
-                        var namelen = br.ReadInt32();
-                        var name = new byte[namelen];
-                        br.Read(name, 0, namelen);
-                        MessageBox.Show(Encoding.UTF8.GetString(name));
-                    }
-                }
+                MessageBox.Show(JsonConvert.DeserializeObject<MessageWithName>(result.Result).name);
             });
             
         }

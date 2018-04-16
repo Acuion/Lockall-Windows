@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Lockall_Windows
 {
@@ -29,7 +30,7 @@ namespace Lockall_Windows
             _listener.Start();
         }
 
-        public async Task<byte[]> ReadAndDecryptClientMessage(byte[] secondComponent)
+        public async Task<string> ReadAndDecryptClientMessage(byte[] secondComponent)
         {
             var client = await _listener.AcceptTcpClientAsync();
             var inputStream = new BinaryReader(client.GetStream());
@@ -39,7 +40,7 @@ namespace Lockall_Windows
 
             var key = EncryptionUtils.Produce256BitFromComponents(ComponentsManager.ComputeDeterminedFirstComponent(),
                 secondComponent);
-            return EncryptionUtils.DecryptDataWithAes256(msg, key, iv);
+            return Encoding.UTF8.GetString(EncryptionUtils.DecryptDataWithAes256(msg, key, iv));
         }
 
         public void Dispose()
