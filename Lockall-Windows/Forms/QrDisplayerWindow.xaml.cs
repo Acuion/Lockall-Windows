@@ -28,7 +28,7 @@ namespace Lockall_Windows.Forms
             InitializeComponent();
         }
 
-        public async Task<string> ShowQrForAJsonResult(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
+        public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
         {
             using (var comm = new ClientListener())
             {
@@ -69,7 +69,7 @@ namespace Lockall_Windows.Forms
                     ImageQr.Source = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                 });
 
-                return await comm.ReadAndDecryptClientMessage(secondComponent);
+                return JsonConvert.DeserializeObject<T>(await comm.ReadAndDecryptClientMessage(secondComponent));
             }
         }
     }

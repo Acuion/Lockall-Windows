@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lockall_Windows.Forms"
         mc:Ignorable="d"
-        Title="MainWindow" Height="202.98" Width="450.068">
+        Title="MainWindow" Height="185.98" Width="450.068">
     <Grid>
-        <GroupBox Header="Key base" HorizontalAlignment="Left" Height="107.181" Margin="10,10,0,0" VerticalAlignment="Top" Width="416.377"/>
-        <TextBox x:Name="secw1Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="20,40,0,0"/>
-        <TextBox x:Name="secw2Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="160,40,0,0"/>
-        <TextBox x:Name="secw3Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="300,40,0,0"/>
-        <TextBox x:Name="secw4Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="20,75,0,0"/>
-        <TextBox x:Name="secw5Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="160,75,0,0"/>
-        <TextBox x:Name="secw6Text" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="300,75,0,0"/>
-        <Button x:Name="pairingButton" Content="Pair a new device" HorizontalAlignment="Center" VerticalAlignment="Top" Width="400" Margin="0,130,0,0" Height="22"/>
+        <GroupBox Header="Key base" HorizontalAlignment="Center" Height="107.181" Margin="0" VerticalAlignment="Top" Width="416.377"/>
+        <TextBox x:Name="secw1Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,30,260,0"/>
+        <TextBox x:Name="secw2Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,30,0,0"/>
+        <TextBox x:Name="secw3Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="260,30,0,0"/>
+        <TextBox x:Name="secw4Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,65,260,0"/>
+        <TextBox x:Name="secw5Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,65,0,0"/>
+        <TextBox x:Name="secw6Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="260,65,0,0"/>
+        <Button x:Name="pairingButton" Content="Pair a new device" HorizontalAlignment="Center" VerticalAlignment="Top" Width="400" Margin="0,115,0,0" Height="22"/>
     </Grid>
 </Window>

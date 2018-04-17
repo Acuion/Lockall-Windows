@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lockall_Windows.Forms"
         mc:Ignorable="d"
-        Title="Pairing window" Height="306" Width="306">
-    <Image x:Name="ImageQr" HorizontalAlignment="Left" Height="256" VerticalAlignment="Top" Width="256" Margin="10,10,0,0"/>
+        Title="Pairing window" Height="290" Width="270">
+    <Image x:Name="ImageQr" HorizontalAlignment="Left" Height="256" VerticalAlignment="Top" Width="256" Margin="0"/>
 </Window>

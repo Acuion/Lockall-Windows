@@ -34,13 +34,18 @@ namespace Lockall_Windows.Forms
 
         private void PairingButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
         {
+            var name = Environment.MachineName + "/" + Environment.UserName;
+
             var pair = new QrDisplayerWindow();
             pair.Show();
-            pair.ShowQrForAJsonResult("PAIRING",
+            pair.ShowQrForAJsonResult<MessageWithName>("PAIRING",
                 JsonConvert.SerializeObject(
-                    new MessageWithName(Environment.MachineName + "/" + Environment.UserName)), true).ContinueWith(result =>
+                    new MessageWithName(name)), true).ContinueWith(result =>
             {
-                MessageBox.Show(JsonConvert.DeserializeObject<MessageWithName>(result.Result).name);
+                if (name == result.Result.name)
+                {
+                    MessageBox.Show("Pairing complete");
+                }
             });
         }
     }
