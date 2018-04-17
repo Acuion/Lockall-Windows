@@ -29,6 +29,11 @@ namespace Lockall_Windows.Forms
         {
             InitializeComponent();
 
+            pairingButton.Click += PairingButtonOnClick;
+        }
+
+        private void PairingButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
             var pair = new QrDisplayerWindow();
             pair.Show();
             pair.ShowQrForAJsonResult("PAIRING",
@@ -37,7 +42,6 @@ namespace Lockall_Windows.Forms
             {
                 MessageBox.Show(JsonConvert.DeserializeObject<MessageWithName>(result.Result).name);
             });
-            
         }
     }
 }
