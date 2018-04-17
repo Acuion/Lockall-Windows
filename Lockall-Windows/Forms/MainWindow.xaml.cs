@@ -31,10 +31,28 @@ namespace Lockall_Windows.Forms
         {
             InitializeComponent();
 
+            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
+            // ni.Icon = Properties.Resources.ResourceManager.icon
+            ni.Visible = true;
+            ni.DoubleClick +=
+                (object sender, EventArgs args) =>
+                {
+                    Show();
+                    WindowState = WindowState.Normal;
+                };
+
             pairingButton.Click += PairingButtonOnClick;
             _firstComponents = new[] {secw1Text, secw2Text, secw3Text, secw4Text, secw5Text, secw6Text};
             foreach (var sec in _firstComponents)
                 sec.PreviewKeyDown += FirstCompElementKeyDown;
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
         }
 
         private void FirstCompElementKeyDown(object sender, KeyEventArgs e)
