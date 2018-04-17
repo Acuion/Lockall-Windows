@@ -14,7 +14,7 @@ namespace Lockall_Windows
 
         public static byte[] ComputeDeterminedFirstComponent()
         {
-            return Encoding.UTF8.GetBytes(File.ReadAllText(FirstComponentFilename));
+            return SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(File.ReadAllText(FirstComponentFilename)));
         }
 
         public static byte[] ComputeRandomizedSecondComponent()
