@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,9 +10,11 @@ namespace Lockall_Windows
 {
     static class ComponentsManager
     {
+        public const string FirstComponentFilename = "firstComponent.txt";
+
         public static byte[] ComputeDeterminedFirstComponent()
         {
-            return Encoding.UTF8.GetBytes("CakeIsALie"); // todo: rtv from the user
+            return Encoding.UTF8.GetBytes(File.ReadAllText(FirstComponentFilename));
         }
 
         public static byte[] ComputeRandomizedSecondComponent()

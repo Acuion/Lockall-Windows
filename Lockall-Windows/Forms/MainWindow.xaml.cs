@@ -26,13 +26,13 @@ namespace Lockall_Windows.Forms
     public partial class MainWindow : Window
     {
         private TextBox[] _firstComponents;
-
+        
         public MainWindow()
         {
             InitializeComponent();
 
             System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
-            // ni.Icon = Properties.Resources.ResourceManager.icon
+            ni.Icon = new System.Drawing.Icon("app.ico");
             ni.Visible = true;
             ni.DoubleClick +=
                 (object sender, EventArgs args) =>
@@ -43,8 +43,25 @@ namespace Lockall_Windows.Forms
 
             pairingButton.Click += PairingButtonOnClick;
             _firstComponents = new[] {secw1Text, secw2Text, secw3Text, secw4Text, secw5Text, secw6Text};
-            foreach (var sec in _firstComponents)
-                sec.PreviewKeyDown += FirstCompElementKeyDown;
+            string[] components;
+            if (File.Exists(ComponentsManager.FirstComponentFilename))
+                components = File.ReadAllText(ComponentsManager.FirstComponentFilename).Split();
+            else
+                components = new string[_firstComponents.Length];
+            for (int i = 0; i < _firstComponents.Length; ++i)
+            {
+                _firstComponents[i].Text = components[i];
+                _firstComponents[i].PreviewKeyDown += FirstCompElementKeyDown;
+                _firstComponents[i].LostFocus += FirstCompElementLostFocus;
+            }
+        }
+
+        private void FirstCompElementLostFocus(object sender, RoutedEventArgs e)
+        {
+            string current = "";
+            for (int i = 0; i < _firstComponents.Length; ++i)
+                current += _firstComponents[i].Text + " ";
+            File.WriteAllText(ComponentsManager.FirstComponentFilename, current);
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -69,6 +86,7 @@ namespace Lockall_Windows.Forms
             {
                 FocusManager.SetFocusedElement(mainGrid, _firstComponents[ix]);
                 e.Handled = true;
+                return;
             }
         }
 
