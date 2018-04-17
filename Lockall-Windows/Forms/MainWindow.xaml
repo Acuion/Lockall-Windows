@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Lockall_Windows.Forms"
         mc:Ignorable="d"
         Title="MainWindow" Height="185.98" Width="450.068">
-    <Grid>
+    <Grid x:Name="mainGrid" FocusManager.FocusedElement="{Binding ElementName=secw1Text}">
         <GroupBox Header="Key base" HorizontalAlignment="Center" Height="107.181" Margin="0" VerticalAlignment="Top" Width="416.377"/>
         <TextBox x:Name="secw1Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,30,260,0"/>
         <TextBox x:Name="secw2Text" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,30,0,0"/>

@@ -25,11 +25,33 @@ namespace Lockall_Windows.Forms
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TextBox[] _firstComponents;
+
         public MainWindow()
         {
             InitializeComponent();
 
             pairingButton.Click += PairingButtonOnClick;
+            _firstComponents = new[] {secw1Text, secw2Text, secw3Text, secw4Text, secw5Text, secw6Text};
+            foreach (var sec in _firstComponents)
+                sec.PreviewKeyDown += FirstCompElementKeyDown;
+        }
+
+        private void FirstCompElementKeyDown(object sender, KeyEventArgs e)
+        {
+            int ix = 0;
+            for (int i = 0; i < _firstComponents.Length; ++i)
+                if (sender == _firstComponents[i])
+                {
+                    ix = i;
+                    break;
+                }
+            ix = (ix + 1) % _firstComponents.Length;
+            if (e.Key == Key.Space)
+            {
+                FocusManager.SetFocusedElement(mainGrid, _firstComponents[ix]);
+                e.Handled = true;
+            }
         }
 
         private void PairingButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
