@@ -69,8 +69,9 @@ namespace Lockall_Windows.Forms
                 {
                     ImageQr.Source = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                 });
-
-                return JsonConvert.DeserializeObject<T>(await comm.ReadAndDecryptClientMessage(secondComponent));
+                var result = await comm.ReadAndDecryptClientMessage(secondComponent);
+                Close();
+                return JsonConvert.DeserializeObject<T>(result);
             }
         }
     }
