@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Remoting.Channels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Lockall_Windows.Messages;
 using Lockall_Windows.Messages.Pairing;
+using Lockall_Windows.Messages.Password;
+using Lockall_Windows.WinUtils;
 using Newtonsoft.Json;
+using Application = System.Windows.Application;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using ModifierKeys = System.Windows.Input.ModifierKeys;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace Lockall_Windows.Forms
 {
@@ -25,17 +23,28 @@ namespace Lockall_Windows.Forms
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TextBox[] _firstComponents;
-        
+        private readonly TextBox[] _firstComponents;
+        private KeyboardHook _passCreate, _passLoad;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
-            ni.Icon = new System.Drawing.Icon("app.ico");
+            Closed += (sender, args) => { Application.Current.Shutdown(0); };
+
+            _passCreate = new KeyboardHook();
+            _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Shift, Keys.Insert);
+            _passCreate.KeyPressed += _passCreate_KeyPressed;
+
+            _passLoad = new KeyboardHook();
+            _passLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.Insert);
+            _passLoad.KeyPressed += _passLoad_KeyPressed;
+
+            NotifyIcon ni = new NotifyIcon();
+            ni.Icon = new Icon("app.ico");
             ni.Visible = true;
             ni.DoubleClick +=
-                (object sender, EventArgs args) =>
+                (sender, args) =>
                 {
                     Show();
                     WindowState = WindowState.Normal;
@@ -56,6 +65,30 @@ namespace Lockall_Windows.Forms
             }
         }
 
+        private void _passLoad_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            var load = new QrDisplayerWindow();
+            load.ShowQrForAJsonResult<MessageWithPassword>("LOAD",
+                JsonConvert.SerializeObject(
+                    new MessageWithResourceid(TitleGetter.GetActiveWindowTitle())), true).ContinueWith(result =>
+            {
+                    SendKeys.SendWait(result.Result.password);
+            });
+            load.Show();
+        }
+
+        private void _passCreate_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            var create = new QrDisplayerWindow();
+            create.ShowQrForAJsonResult<MessageStatus>("STORE",
+                JsonConvert.SerializeObject(
+                    new MessageWithPassword(TitleGetter.GetActiveWindowTitle(), "qwerty")), true).ContinueWith(result =>
+            {
+                 MessageBox.Show(result.Result.status);
+            });
+            create.Show();
+        }
+
         private void FirstCompElementLostFocus(object sender, RoutedEventArgs e)
         {
             string current = "";
@@ -67,7 +100,7 @@ namespace Lockall_Windows.Forms
         protected override void OnStateChanged(EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
-                this.Hide();
+                Hide();
 
             base.OnStateChanged(e);
         }
@@ -86,7 +119,6 @@ namespace Lockall_Windows.Forms
             {
                 FocusManager.SetFocusedElement(mainGrid, _firstComponents[ix]);
                 e.Handled = true;
-                return;
             }
         }
 
@@ -95,7 +127,6 @@ namespace Lockall_Windows.Forms
             var name = Environment.MachineName + "/" + Environment.UserName;
 
             var pair = new QrDisplayerWindow();
-            pair.Show();
             pair.ShowQrForAJsonResult<MessageWithName>("PAIRING",
                 JsonConvert.SerializeObject(
                     new MessageWithName(name)), true).ContinueWith(result =>
@@ -105,6 +136,7 @@ namespace Lockall_Windows.Forms
                     MessageBox.Show("Pairing complete");
                 }
             });
+            pair.Show();
         }
     }
 }

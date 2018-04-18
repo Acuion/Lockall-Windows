@@ -76,8 +76,13 @@
     <Compile Include="Forms\QrDisplayerWindow.xaml.cs">
       <DependentUpon>QrDisplayerWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Messages\MessageStatus.cs" />
+    <Compile Include="WinUtils\KeyboardHook.cs" />
     <Compile Include="Messages\Pairing\MessageWithName.cs" />
+    <Compile Include="Messages\Password\MessageWithPassword.cs" />
+    <Compile Include="Messages\Password\MessageWithResourceid.cs" />
     <Compile Include="QrBuilder.cs" />
+    <Compile Include="WinUtils\TitleGetter.cs" />
     <Page Include="Forms\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
