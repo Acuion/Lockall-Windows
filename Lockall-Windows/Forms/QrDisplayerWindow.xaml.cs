@@ -26,6 +26,7 @@ namespace Lockall_Windows.Forms
         public QrDisplayerWindow()
         {
             InitializeComponent();
+            ShowActivated = false;
         }
 
         public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
