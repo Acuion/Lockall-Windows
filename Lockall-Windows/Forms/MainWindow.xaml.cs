@@ -79,14 +79,21 @@ namespace Lockall_Windows.Forms
 
         private void _passCreate_KeyPressed(object sender, KeyPressedEventArgs e)
         {
-            var create = new QrDisplayerWindow();
-            create.ShowQrForAJsonResult<MessageStatus>("STORE",
-                JsonConvert.SerializeObject(
-                    new MessageWithPassword(TitleGetter.GetActiveWindowTitle(), "qwerty")), true).ContinueWith(result =>
+            var winHeader = TitleGetter.GetActiveWindowTitle();
+
+            var passAsker = new PasswordGetterWindow(winHeader);
+            var res = passAsker.ShowDialog();
+            if (res == true)
             {
-                 MessageBox.Show(result.Result.status);
-            });
-            create.Show();
+                var create = new QrDisplayerWindow();
+                create.ShowQrForAJsonResult<MessageStatus>("STORE",
+                    JsonConvert.SerializeObject(
+                        new MessageWithPassword(winHeader, passAsker.passwordBox.Password)), true).ContinueWith(result =>
+                {
+                    MessageBox.Show(result.Result.status);
+                });
+                create.Show();
+            }
         }
 
         private void FirstCompElementLostFocus(object sender, RoutedEventArgs e)
