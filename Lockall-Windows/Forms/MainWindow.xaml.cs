@@ -68,7 +68,7 @@ namespace Lockall_Windows.Forms
         private void _passLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             var load = new QrDisplayerWindow("Pulling");
-            load.ShowQrForAJsonResult<MessageWithPassword>("LOAD",
+            load.ShowQrForAJsonResult<MessageWithPassword>("PULL",
                 JsonConvert.SerializeObject(
                     new MessageWithResourceid(TitleGetter.GetActiveWindowTitle())), true).ContinueWith(result =>
             {
