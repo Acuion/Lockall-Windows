@@ -15,7 +15,8 @@ namespace Lockall_Windows
         {
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
-                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("LOCKALL:" + prefix + ":" + Convert.ToBase64String(source), QRCodeGenerator.ECCLevel.Q))
+                var data = "LOCKALL:" + prefix + ":" + Convert.ToBase64String(source);
+                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q))
                 {
                     using (QRCode qrCode = new QRCode(qrCodeData))
                     {
