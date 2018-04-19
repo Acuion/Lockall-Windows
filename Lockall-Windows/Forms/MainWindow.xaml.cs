@@ -67,7 +67,7 @@ namespace Lockall_Windows.Forms
 
         private void _passLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
-            var load = new QrDisplayerWindow();
+            var load = new QrDisplayerWindow("Pulling");
             load.ShowQrForAJsonResult<MessageWithPassword>("LOAD",
                 JsonConvert.SerializeObject(
                     new MessageWithResourceid(TitleGetter.GetActiveWindowTitle())), true).ContinueWith(result =>
@@ -85,7 +85,7 @@ namespace Lockall_Windows.Forms
             var res = passAsker.ShowDialog();
             if (res == true)
             {
-                var create = new QrDisplayerWindow();
+                var create = new QrDisplayerWindow("Storing");
                 create.ShowQrForAJsonResult<MessageStatus>("STORE",
                     JsonConvert.SerializeObject(
                         new MessageWithPassword(winHeader, passAsker.passwordBox.Password)), true).ContinueWith(result =>
@@ -133,7 +133,7 @@ namespace Lockall_Windows.Forms
         {
             var name = Environment.MachineName + "/" + Environment.UserName;
 
-            var pair = new QrDisplayerWindow();
+            var pair = new QrDisplayerWindow("Pairing");
             pair.ShowQrForAJsonResult<MessageWithName>("PAIRING",
                 JsonConvert.SerializeObject(
                     new MessageWithName(name)), true).ContinueWith(result =>

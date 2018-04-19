@@ -23,9 +23,10 @@ namespace Lockall_Windows.Forms
     /// </summary>
     public partial class QrDisplayerWindow : Window
     {
-        public QrDisplayerWindow()
+        public QrDisplayerWindow(string title)
         {
             InitializeComponent();
+            Title += title;
             ShowActivated = false;
         }
 
