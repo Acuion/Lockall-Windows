@@ -39,14 +39,13 @@ namespace Lockall_Windows
             var contextMenu = new ContextMenu();
             contextMenu.MenuItems.AddRange(new [] {new MenuItem(), new MenuItem(), new MenuItem()});
             contextMenu.MenuItems[2].Text = "Exit";
-            contextMenu.MenuItems[2].Click += (o, s) => { Application.Exit(); };
+            contextMenu.MenuItems[2].Click += (o, s) => { Application.ExitThread(); };
             contextMenu.MenuItems[1].Text = "Pair a new device";
             contextMenu.MenuItems[1].Click += PairingButton_Click;
             contextMenu.MenuItems[0].Text = "Edit keybase";
             contextMenu.MenuItems[0].Click += (o, s) =>
             {
                 WindowState = FormWindowState.Normal;
-                ShowInTaskbar = true;
             };
             trayIcon.ContextMenu = contextMenu;
 
@@ -120,6 +119,12 @@ namespace Lockall_Windows
                         {
                         });
             }
+        }
+
+        private void FirstComponentForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            WindowState = FormWindowState.Minimized;
         }
 
         private void FirstCompElementKeyDown(object sender, KeyEventArgs e)
