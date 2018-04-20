@@ -1,17 +1,17 @@
 ﻿using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace Lockall_Windows
 {
     static class QrBuilder
     {
-        public static BitmapImage CreateQrFromBytes(string prefix, byte[] source)
+        public static Bitmap CreateQrFromBytes(string prefix, byte[] source)
         {
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
@@ -22,15 +22,7 @@ namespace Lockall_Windows
                     {
                         using (MemoryStream memory = new MemoryStream())
                         {
-                            qrCode.GetGraphic(20).Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                            memory.Position = 0;
-                            BitmapImage bitmapimage = new BitmapImage();
-                            bitmapimage.BeginInit();
-                            bitmapimage.StreamSource = memory;
-                            bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmapimage.EndInit();
-
-                            return bitmapimage;
+                            return qrCode.GetGraphic(20);
                         }
                     }
                 }
