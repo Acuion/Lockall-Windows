@@ -90,7 +90,6 @@ namespace Lockall_Windows.Forms
                     JsonConvert.SerializeObject(
                         new MessageWithPassword(winHeader, passAsker.passwordBox.Password)), true).ContinueWith(result =>
                 {
-                    MessageBox.Show(result.Result.status);
                 });
                 create.Show();
             }
