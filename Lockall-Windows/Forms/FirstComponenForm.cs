@@ -17,12 +17,12 @@ using Newtonsoft.Json;
 
 namespace Lockall_Windows
 {
-    public partial class Form1 : Form
+    public partial class FirstComponentForm : Form
     {
         private readonly TextBox[] _firstComponents;
-        private KeyboardHook _passCreate, _passLoad;
+        private readonly KeyboardHook _passCreate, _passLoad;
 
-        public Form1()
+        public FirstComponentForm()
         {
             InitializeComponent();
 
@@ -34,7 +34,21 @@ namespace Lockall_Windows
             _passLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.Insert);
             _passLoad.KeyPressed += _passLoad_KeyPressed;
 
-            pairingButton.Click += PairingButton_Click;
+            trayIcon.Icon = Icon;
+            trayIcon.Visible = true;
+            var contextMenu = new ContextMenu();
+            contextMenu.MenuItems.AddRange(new [] {new MenuItem(), new MenuItem(), new MenuItem()});
+            contextMenu.MenuItems[2].Text = "Exit";
+            contextMenu.MenuItems[2].Click += (o, s) => { Application.Exit(); };
+            contextMenu.MenuItems[1].Text = "Pair a new device";
+            contextMenu.MenuItems[1].Click += PairingButton_Click;
+            contextMenu.MenuItems[0].Text = "Edit keybase";
+            contextMenu.MenuItems[0].Click += (o, s) =>
+            {
+                WindowState = FormWindowState.Normal;
+                ShowInTaskbar = true;
+            };
+            trayIcon.ContextMenu = contextMenu;
 
             _firstComponents = new[] { secw1Text, secw2Text, secw3Text, secw4Text, secw5Text, secw6Text };
             string[] components;
@@ -48,6 +62,9 @@ namespace Lockall_Windows
                 _firstComponents[i].KeyDown += FirstCompElementKeyDown;
                 _firstComponents[i].LostFocus += FirstComponentLostFocus;
             }
+
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
         }
 
         private void PairingButton_Click(object sender, EventArgs e)

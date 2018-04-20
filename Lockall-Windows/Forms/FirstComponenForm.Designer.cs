@@ -1,6 +1,6 @@
 ﻿namespace Lockall_Windows
 {
-    partial class Form1
+    partial class FirstComponentForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,13 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FirstComponentForm));
             this.secw1Text = new System.Windows.Forms.TextBox();
             this.secw2Text = new System.Windows.Forms.TextBox();
             this.secw3Text = new System.Windows.Forms.TextBox();
             this.secw4Text = new System.Windows.Forms.TextBox();
             this.secw5Text = new System.Windows.Forms.TextBox();
             this.secw6Text = new System.Windows.Forms.TextBox();
-            this.pairingButton = new System.Windows.Forms.Button();
+            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
             // secw1Text
@@ -79,28 +81,23 @@
             this.secw6Text.Size = new System.Drawing.Size(130, 20);
             this.secw6Text.TabIndex = 5;
             // 
-            // pairingButton
+            // trayIcon
             // 
-            this.pairingButton.Location = new System.Drawing.Point(12, 69);
-            this.pairingButton.Name = "pairingButton";
-            this.pairingButton.Size = new System.Drawing.Size(405, 23);
-            this.pairingButton.TabIndex = 6;
-            this.pairingButton.Text = "Pair a new device";
-            this.pairingButton.UseVisualStyleBackColor = true;
+            this.trayIcon.Visible = true;
             // 
-            // Form1
+            // FirstComponentForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(429, 104);
-            this.Controls.Add(this.pairingButton);
+            this.ClientSize = new System.Drawing.Size(429, 69);
             this.Controls.Add(this.secw6Text);
             this.Controls.Add(this.secw5Text);
             this.Controls.Add(this.secw1Text);
             this.Controls.Add(this.secw4Text);
             this.Controls.Add(this.secw2Text);
             this.Controls.Add(this.secw3Text);
-            this.Name = "Form1";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "FirstComponentForm";
             this.Text = "Key base";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -115,7 +112,7 @@
         private System.Windows.Forms.TextBox secw4Text;
         private System.Windows.Forms.TextBox secw5Text;
         private System.Windows.Forms.TextBox secw6Text;
-        private System.Windows.Forms.Button pairingButton;
+        private System.Windows.Forms.NotifyIcon trayIcon;
     }
 }
 
