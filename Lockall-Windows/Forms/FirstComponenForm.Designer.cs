@@ -96,7 +96,9 @@
             this.Controls.Add(this.secw4Text);
             this.Controls.Add(this.secw2Text);
             this.Controls.Add(this.secw3Text);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "FirstComponentForm";
             this.Text = "Key base";
             this.ResumeLayout(false);

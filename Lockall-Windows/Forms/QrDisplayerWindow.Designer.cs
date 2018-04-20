@@ -47,8 +47,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(290, 274);
             this.Controls.Add(this.ImageQr);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "QrDisplayerWindow";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "QrDisplayerWindow";
+            this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.ImageQr)).EndInit();
             this.ResumeLayout(false);
 
