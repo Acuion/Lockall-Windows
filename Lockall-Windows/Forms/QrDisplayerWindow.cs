@@ -58,10 +58,7 @@ namespace Lockall_Windows.Forms
                 qrBody.AddRange(BitConverter.GetBytes(encryptedUserData.Length));
                 qrBody.AddRange(encryptedUserData);
 
-                ImageQr.Invoke(new Action(() =>
-                {
-                    ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
-                }));
+                ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                 var result = await comm.ReadAndDecryptClientMessage(secondComponent);
                 Close();
                 return JsonConvert.DeserializeObject<T>(result);

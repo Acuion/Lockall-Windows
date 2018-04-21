@@ -30,7 +30,7 @@ namespace Lockall_Windows
             _passLoad.KeyPressed += _passLoad_KeyPressed;
 
             _otpLoad = new KeyboardHook();
-            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.O | Keys.Insert);
+            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.Insert);
             _otpLoad.KeyPressed += _otpLoad_KeyPressed;
 
             trayIcon.Icon = Icon;
@@ -65,12 +65,12 @@ namespace Lockall_Windows
         private void _otpLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             var load = new QrDisplayerWindow("OTP");
-            load.Show();
             load.ShowQrForAJsonResult<MessageWithPassword>("OTP",
                 JsonConvert.SerializeObject(new MessageStatus("Hi"))).ContinueWith(result =>
                     {
                         SendKeys.SendWait(result.Result.password);
                     });
+            load.Show();
         }
 
         private void PairingButton_Click(object sender, EventArgs e)
@@ -78,7 +78,6 @@ namespace Lockall_Windows
             var name = Environment.MachineName + "/" + Environment.UserName;
 
             var pair = new QrDisplayerWindow("PAIR");
-            pair.Show();
             pair.ShowQrForAJsonResult<MessageWithName>("PAIRING",
                 JsonConvert.SerializeObject(
                     new MessageWithName(name)), true).ContinueWith(result =>
@@ -88,6 +87,7 @@ namespace Lockall_Windows
                     MessageBox.Show("Pairing complete");
                 }
             });
+            pair.Show();
         }
 
         private void FirstComponentLostFocus(object sender, EventArgs e)
@@ -101,13 +101,13 @@ namespace Lockall_Windows
         private void _passLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             var load = new QrDisplayerWindow("PULL");
-            load.Show();
             load.ShowQrForAJsonResult<MessageWithPassword>("PULL",
                 JsonConvert.SerializeObject(
                     new MessageWithResourceid(TitleGetter.GetActiveWindowTitle())), true).ContinueWith(result =>
-                    {
-                        SendKeys.SendWait(result.Result.password);
-                    });
+            {
+                SendKeys.SendWait(result.Result.password);
+            });
+            load.Show();
         }
 
         private void _passCreate_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -119,12 +119,12 @@ namespace Lockall_Windows
             if (res == DialogResult.OK)
             {
                 var create = new QrDisplayerWindow("STORE");
-                create.Show();
                 create.ShowQrForAJsonResult<MessageStatus>("STORE",
                     JsonConvert.SerializeObject(
                         new MessageWithPassword(winHeader, passAsker.PasswordResult)), true).ContinueWith(result =>
                         {
                         });
+                create.Show();
             }
         }
 
