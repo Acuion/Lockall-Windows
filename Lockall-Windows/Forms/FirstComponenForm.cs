@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Lockall_Windows.Forms;
 using Lockall_Windows.Messages;
@@ -20,7 +13,7 @@ namespace Lockall_Windows
     public partial class FirstComponentForm : Form
     {
         private readonly TextBox[] _firstComponents;
-        private readonly KeyboardHook _passCreate, _passLoad;
+        private readonly KeyboardHook _passCreate, _passLoad, _otpLoad;
 
         protected override bool ShowWithoutActivation => true;
 
@@ -35,6 +28,10 @@ namespace Lockall_Windows
             _passLoad = new KeyboardHook();
             _passLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.Insert);
             _passLoad.KeyPressed += _passLoad_KeyPressed;
+
+            _otpLoad = new KeyboardHook();
+            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.O | Keys.Insert);
+            _otpLoad.KeyPressed += _otpLoad_KeyPressed;
 
             trayIcon.Icon = Icon;
             trayIcon.Visible = true;
@@ -63,6 +60,17 @@ namespace Lockall_Windows
                 _firstComponents[i].KeyDown += FirstCompElementKeyDown;
                 _firstComponents[i].LostFocus += FirstComponentLostFocus;
             }
+        }
+
+        private void _otpLoad_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            var load = new QrDisplayerWindow("OTP");
+            load.Show();
+            load.ShowQrForAJsonResult<MessageWithPassword>("OTP",
+                JsonConvert.SerializeObject(new MessageStatus("Hi"))).ContinueWith(result =>
+                    {
+                        SendKeys.SendWait(result.Result.password);
+                    });
         }
 
         private void PairingButton_Click(object sender, EventArgs e)
