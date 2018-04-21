@@ -101,7 +101,9 @@
             this.MaximizeBox = false;
             this.Name = "FirstComponentForm";
             this.Text = "Key base";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FirstComponentForm_FormClosing);
+            this.Shown += new System.EventHandler(this.FirstComponentForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

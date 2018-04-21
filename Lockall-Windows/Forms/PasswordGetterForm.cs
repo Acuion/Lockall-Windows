@@ -14,6 +14,8 @@ namespace Lockall_Windows.Forms
     {
         internal string PasswordResult;
 
+        protected override bool ShowWithoutActivation => true;
+
         public PasswordGetterForm(string title)
         {
             InitializeComponent();

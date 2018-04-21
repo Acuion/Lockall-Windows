@@ -51,7 +51,6 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "QrDisplayerWindow";
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "QrDisplayerWindow";
             this.TopMost = true;

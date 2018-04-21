@@ -22,6 +22,8 @@ namespace Lockall_Windows
         private readonly TextBox[] _firstComponents;
         private readonly KeyboardHook _passCreate, _passLoad;
 
+        protected override bool ShowWithoutActivation => true;
+
         public FirstComponentForm()
         {
             InitializeComponent();
@@ -45,7 +47,7 @@ namespace Lockall_Windows
             contextMenu.MenuItems[0].Text = "Edit keybase";
             contextMenu.MenuItems[0].Click += (o, s) =>
             {
-                WindowState = FormWindowState.Normal;
+                Show();
             };
             trayIcon.ContextMenu = contextMenu;
 
@@ -61,9 +63,6 @@ namespace Lockall_Windows
                 _firstComponents[i].KeyDown += FirstCompElementKeyDown;
                 _firstComponents[i].LostFocus += FirstComponentLostFocus;
             }
-
-            WindowState = FormWindowState.Minimized;
-            ShowInTaskbar = false;
         }
 
         private void PairingButton_Click(object sender, EventArgs e)
@@ -124,7 +123,12 @@ namespace Lockall_Windows
         private void FirstComponentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
-            WindowState = FormWindowState.Minimized;
+            Hide();
+        }
+
+        private void FirstComponentForm_Shown(object sender, EventArgs e)
+        {
+            Hide();
         }
 
         private void FirstCompElementKeyDown(object sender, KeyEventArgs e)
