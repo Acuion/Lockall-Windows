@@ -65,8 +65,7 @@ namespace Lockall_Windows
         private void _otpLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             var load = new QrDisplayerWindow("OTP");
-            load.ShowQrForAJsonResult<MessageWithPassword>("OTP",
-                JsonConvert.SerializeObject(new MessageStatus("Hi"))).ContinueWith(result =>
+            load.ShowQrForAJsonResult<MessageWithPassword>("OTP", "{}").ContinueWith(result =>
                     {
                         SendKeys.SendWait(result.Result.password);
                     });
@@ -103,7 +102,7 @@ namespace Lockall_Windows
             var load = new QrDisplayerWindow("PULL");
             load.ShowQrForAJsonResult<MessageWithPassword>("PULL",
                 JsonConvert.SerializeObject(
-                    new MessageWithResourceid(TitleGetter.GetActiveWindowTitle())), true).ContinueWith(result =>
+                    new MessageWithResourceid(TitleGetter.GetActiveWindowTitle()))).ContinueWith(result =>
             {
                 SendKeys.SendWait(result.Result.password);
             });
@@ -121,7 +120,7 @@ namespace Lockall_Windows
                 var create = new QrDisplayerWindow("STORE");
                 create.ShowQrForAJsonResult<MessageStatus>("STORE",
                     JsonConvert.SerializeObject(
-                        new MessageWithPassword(winHeader, passAsker.PasswordResult)), true).ContinueWith(result =>
+                        new MessageWithPassword(winHeader, passAsker.PasswordResult))).ContinueWith(result =>
                         {
                         });
                 create.Show();
