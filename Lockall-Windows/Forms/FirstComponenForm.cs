@@ -22,15 +22,15 @@ namespace Lockall_Windows
             InitializeComponent();
 
             _passCreate = new KeyboardHook();
-            _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Shift, Keys.Insert);
+            _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.F11);
             _passCreate.KeyPressed += _passCreate_KeyPressed;
 
             _passLoad = new KeyboardHook();
-            _passLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt, Keys.Insert);
+            _passLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.Insert);
             _passLoad.KeyPressed += _passLoad_KeyPressed;
 
             _otpLoad = new KeyboardHook();
-            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.Insert);
+            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.F12);
             _otpLoad.KeyPressed += _otpLoad_KeyPressed;
 
             trayIcon.Icon = Icon;
