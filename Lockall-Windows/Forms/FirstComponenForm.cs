@@ -1,12 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
+using Lockall_Windows.BrowserPlugin;
 using Lockall_Windows.Forms;
 using Lockall_Windows.Messages;
 using Lockall_Windows.Messages.Pairing;
 using Lockall_Windows.Messages.Password;
 using Lockall_Windows.WinUtils;
 using Newtonsoft.Json;
+using WebSocketSharp.Server;
 
 namespace Lockall_Windows
 {
@@ -17,9 +20,34 @@ namespace Lockall_Windows
 
         protected override bool ShowWithoutActivation => true;
 
+        private WebSocketServer _wsServer;
+
         public FirstComponentForm()
         {
             InitializeComponent();
+
+
+            for (int i = 0; i <= 1024; ++i)
+            {
+                try
+                {
+                    _wsServer = new WebSocketServer(IPAddress.Loopback, 42000);
+                }
+                catch (Exception ex)
+                {
+                    // ignored, will wait for a free port
+                }
+            }
+
+            if (_wsServer == null)
+            {
+                MessageBox.Show("No free port", "Browser plugin cannot be used", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                _wsServer.AddWebSocketService<WebsocketComm>("/Lockall");
+                _wsServer.Start();
+            }
 
             _passCreate = new KeyboardHook();
             _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.F11);
