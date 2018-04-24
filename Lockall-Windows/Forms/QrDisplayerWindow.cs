@@ -26,37 +26,9 @@ namespace Lockall_Windows.Forms
         {
             using (var comm = new ClientListener())
             {
-                var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
                 var secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
 
-                var qrBody = new List<byte>();
-                if (attachFirstComponent)
-                {
-                    qrBody.Add(1);
-                    qrBody.AddRange(BitConverter.GetBytes(firstComponent.Length));
-                    qrBody.AddRange(firstComponent);
-                }
-                else
-                {
-                    qrBody.Add(0);
-                }
-                qrBody.AddRange(BitConverter.GetBytes(secondComponent.Length));
-                qrBody.AddRange(secondComponent);
-
-                var iv = EncryptionUtils.Generate128BitIv();
-                var key = EncryptionUtils.Produce256BitFromComponents(firstComponent, secondComponent);
-
-                qrBody.AddRange(iv);
-
-                var userData = new List<byte>();
-                userData.AddRange(comm.ListensAtIp);
-                userData.AddRange(BitConverter.GetBytes(comm.ListensAtPort));
-                userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
-
-                var encryptedUserData = EncryptionUtils.EncryptDataWithAes256(userData.ToArray(), key, iv);
-
-                qrBody.AddRange(BitConverter.GetBytes(encryptedUserData.Length));
-                qrBody.AddRange(encryptedUserData);
+                var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, secondComponent, attachFirstComponent);
 
                 ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                 var result = await comm.ReadAndDecryptClientMessage(secondComponent);

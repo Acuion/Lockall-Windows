@@ -28,5 +28,42 @@ namespace Lockall_Windows
                 }
             }
         }
+
+        public static byte[] BuildQrBody(ClientListener responseTo, string qrUserContentJson,
+            byte[] secondComponent, bool attachFirstComponent = false)
+        {
+            var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
+
+            var qrBody = new List<byte>();
+            if (attachFirstComponent)
+            {
+                qrBody.Add(1); // unsafe, with fc
+                qrBody.AddRange(BitConverter.GetBytes(firstComponent.Length));
+                qrBody.AddRange(firstComponent);
+            }
+            else
+            {
+                qrBody.Add(0); // safe
+            }
+            qrBody.AddRange(BitConverter.GetBytes(secondComponent.Length));
+            qrBody.AddRange(secondComponent);
+
+            var iv = EncryptionUtils.Generate128BitIv();
+            var key = EncryptionUtils.Produce256BitFromComponents(firstComponent, secondComponent);
+
+            qrBody.AddRange(iv);
+
+            var userData = new List<byte>();
+            userData.AddRange(responseTo.ListensAtIp);
+            userData.AddRange(BitConverter.GetBytes(responseTo.ListensAtPort));
+            userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
+
+            var encryptedUserData = EncryptionUtils.EncryptDataWithAes256(userData.ToArray(), key, iv);
+
+            qrBody.AddRange(BitConverter.GetBytes(encryptedUserData.Length));
+            qrBody.AddRange(encryptedUserData);
+
+            return qrBody.ToArray();
+        }
     }
 }
