@@ -63,7 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BrowserPlugin\WebsocketComm.cs" />
+    <Compile Include="BrowserPlugin\ChromeComm.cs" />
     <Compile Include="ClientListener.cs" />
     <Compile Include="ComponentsManager.cs" />
     <Compile Include="EncryptionUtils.cs" />

@@ -20,32 +20,28 @@ namespace Lockall_Windows
 
         protected override bool ShowWithoutActivation => true;
 
-        private WebSocketServer _wsServer;
+        private readonly WebSocketServer _wsServer;
 
         public FirstComponentForm()
         {
             InitializeComponent();
 
-
-            for (int i = 0; i <= 1024; ++i)
+            try
             {
-                try
-                {
-                    _wsServer = new WebSocketServer(IPAddress.Loopback, 42000);
-                }
-                catch (Exception ex)
-                {
-                    // ignored, will wait for a free port
-                }
+                _wsServer = new WebSocketServer(IPAddress.Loopback, 42587);
+            }
+            catch (Exception ex)
+            {
+                // no plugin support
             }
 
             if (_wsServer == null)
             {
-                MessageBox.Show("No free port", "Browser plugin cannot be used", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Cannot bind to 42587", "Browser plugin cannot be used", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
-                _wsServer.AddWebSocketService<WebsocketComm>("/Lockall");
+                _wsServer.AddWebSocketService<ChromeComm>("/Lockall");
                 _wsServer.Start();
             }
 
@@ -90,16 +86,6 @@ namespace Lockall_Windows
             }
         }
 
-        private void _otpLoad_KeyPressed(object sender, KeyPressedEventArgs e)
-        {
-            var load = new QrDisplayerWindow("OTP");
-            load.ShowQrForAJsonResult<MessageWithPassword>("OTP", "{}").ContinueWith(result =>
-                    {
-                        SendKeys.SendWait(result.Result.password);
-                    });
-            load.Show();
-        }
-
         private void PairingButton_Click(object sender, EventArgs e)
         {
             var name = Environment.MachineName + "/" + Environment.UserName;
@@ -125,12 +111,48 @@ namespace Lockall_Windows
             File.WriteAllText(ComponentsManager.FirstComponentFilename, current);
         }
 
+        private void _otpLoad_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            var winHeader = TitleGetter.GetActiveWindowTitle();
+
+            if (winHeader.EndsWith("Google Chrome") && ChromeComm.ChromeConnection != null)
+            {
+                ChromeComm.ChromeConnection.ShowQrInBrowserForAJsonResult<MessageWithPassword>("OTP",
+                    JsonConvert.SerializeObject(
+                        new MessageWithResourceid(""))).ContinueWith(result =>
+                {
+                    SendKeys.SendWait(result.Result.password);
+                });
+                return;
+            }
+
+            var load = new QrDisplayerWindow("OTP");
+            load.ShowQrForAJsonResult<MessageWithPassword>("OTP", "{}").ContinueWith(result =>
+            {
+                SendKeys.SendWait(result.Result.password);
+            });
+            load.Show();
+        }
+
         private void _passLoad_KeyPressed(object sender, KeyPressedEventArgs e)
         {
+            var winHeader = TitleGetter.GetActiveWindowTitle();
+
+            if (winHeader.EndsWith("Google Chrome") && ChromeComm.ChromeConnection != null)
+            {
+                ChromeComm.ChromeConnection.ShowQrInBrowserForAJsonResult<MessageWithPassword>("PULL",
+                    JsonConvert.SerializeObject(
+                        new MessageWithResourceid(""))).ContinueWith(result =>
+                {
+                    SendKeys.SendWait(result.Result.password);
+                });
+                return;
+            }
+
             var load = new QrDisplayerWindow("PULL");
             load.ShowQrForAJsonResult<MessageWithPassword>("PULL",
                 JsonConvert.SerializeObject(
-                    new MessageWithResourceid(TitleGetter.GetActiveWindowTitle()))).ContinueWith(result =>
+                    new MessageWithResourceid(winHeader))).ContinueWith(result =>
             {
                 SendKeys.SendWait(result.Result.password);
             });
@@ -145,6 +167,15 @@ namespace Lockall_Windows
             var res = passAsker.ShowDialog();
             if (res == DialogResult.OK)
             {
+                if (winHeader.EndsWith("Google Chrome") && ChromeComm.ChromeConnection != null)
+                {
+                    ChromeComm.ChromeConnection.ShowQrInBrowserForAJsonResult<MessageStatus>("STORE",
+                        JsonConvert.SerializeObject(
+                            new MessageWithPassword("", passAsker.PasswordResult))).ContinueWith(result =>
+                    {
+                    });
+                    return;
+                }
                 var create = new QrDisplayerWindow("STORE");
                 create.ShowQrForAJsonResult<MessageStatus>("STORE",
                     JsonConvert.SerializeObject(

@@ -27,6 +27,8 @@ namespace Lockall_Windows.Forms
                     DialogResult = DialogResult.Cancel;
             };
             Text = "Pass for " + title;
+
+            TopLevel = true;
         }
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)

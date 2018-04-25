@@ -32,7 +32,7 @@ namespace Lockall_Windows
 
         public async Task<string> ReadAndDecryptClientMessage(byte[] secondComponent)
         {
-            var client = await _listener.AcceptTcpClientAsync();
+            var client = await _listener.AcceptTcpClientAsync(); // todo: timeout
             var inputStream = new BinaryReader(client.GetStream());
             var iv = inputStream.ReadBytes(16);
             var msgLen = inputStream.ReadInt32();
