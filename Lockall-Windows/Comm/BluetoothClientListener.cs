@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
@@ -14,7 +15,7 @@ namespace Lockall_Windows.Comm
 
         public BluetoothClientListener()
         {
-            _bluetoothGuid = new Guid();
+            _bluetoothGuid = Guid.NewGuid();
 
             _listener = new BluetoothListener(_bluetoothGuid);
             _listener.Start();
@@ -35,18 +36,22 @@ namespace Lockall_Windows.Comm
         {
             List<byte> result = new List<byte>();
             result.Add(2); // bluetooth
-            result.AddRange(GetBtMacAddress().ToByteArray());
-            result.AddRange(_bluetoothGuid.ToByteArray());
+            var mac = Encoding.UTF8.GetBytes(GetBtMacAddress().ToString("C"));
+            result.AddRange(mac);
+            var uuid = Encoding.UTF8.GetBytes(_bluetoothGuid.ToString());
+            result.AddRange(uuid);
             return result;
         }
 
         public override Task<string> ReadAndDecryptClientMessage(byte[] secondComponent)
         {
-            return new Task<string>(() =>
+            var task = new Task<string>(() =>
             {
                 var client = _listener.AcceptBluetoothClient();
                 return DecryptClientMessage(client.GetStream(), secondComponent);
             });
+            task.Start();
+            return task;
         }
     }
 }
