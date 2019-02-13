@@ -46,7 +46,7 @@ namespace Lockall_Windows
             }
 
             _passCreate = new KeyboardHook();
-            _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.F11);
+            _passCreate.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.N);
             _passCreate.KeyPressed += _passCreate_KeyPressed;
 
             _passLoad = new KeyboardHook();
@@ -54,7 +54,7 @@ namespace Lockall_Windows
             _passLoad.KeyPressed += _passLoad_KeyPressed;
 
             _otpLoad = new KeyboardHook();
-            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.F12);
+            _otpLoad.RegisterHotKey(WinUtils.ModifierKeys.Alt | WinUtils.ModifierKeys.Control, Keys.O);
             _otpLoad.KeyPressed += _otpLoad_KeyPressed;
 
             trayIcon.Icon = Icon;
