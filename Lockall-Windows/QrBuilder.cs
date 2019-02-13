@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lockall_Windows.Comm;
 
 namespace Lockall_Windows
 {
@@ -54,8 +55,7 @@ namespace Lockall_Windows
             qrBody.AddRange(iv);
 
             var userData = new List<byte>();
-            userData.AddRange(responseTo.ListensAtIp);
-            userData.AddRange(BitConverter.GetBytes(responseTo.ListensAtPort));
+            userData.AddRange(responseTo.ComputeHeader());
             userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
 
             var encryptedUserData = EncryptionUtils.EncryptDataWithAes256(userData.ToArray(), key, iv);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Lockall_Windows.Comm;
 using Lockall_Windows.Forms;
 using Lockall_Windows.Messages;
 using Lockall_Windows.Messages.Password;
@@ -19,7 +20,7 @@ namespace Lockall_Windows.BrowserPlugin
 
         public async Task<T> ShowQrInBrowserForAJsonResult<T>(string prefix, string qrUserContentJson)
         {
-            using (var comm = new ClientListener())
+            using (var comm = new TcpClientListener())
             {
                 var secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
 

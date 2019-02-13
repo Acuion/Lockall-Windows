@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Lockall_Windows.Comm;
 using Newtonsoft.Json;
 
 namespace Lockall_Windows.Forms
@@ -22,9 +23,18 @@ namespace Lockall_Windows.Forms
 
         protected override bool ShowWithoutActivation => true;
 
+        private ClientListener NewClientListener()
+        {
+            if (SettingsHolder.ConnectionType == ConnectionType.Wifi)
+            {
+                return new TcpClientListener();
+            }
+            return new BluetoothClientListener();
+        }
+
         public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
         {
-            using (var comm = new ClientListener())
+            using (var comm = NewClientListener())
             {
                 var secondComponent = ComponentsManager.ComputeRandomizedSecondComponent();
 

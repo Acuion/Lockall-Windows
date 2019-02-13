@@ -60,9 +60,11 @@ namespace Lockall_Windows
             trayIcon.Icon = Icon;
             trayIcon.Visible = true;
             var contextMenu = new ContextMenu();
-            contextMenu.MenuItems.AddRange(new [] {new MenuItem(), new MenuItem(), new MenuItem()});
-            contextMenu.MenuItems[2].Text = "Exit";
-            contextMenu.MenuItems[2].Click += (o, s) => { Application.ExitThread(); };
+            contextMenu.MenuItems.AddRange(new [] {new MenuItem(), new MenuItem(), new MenuItem(), new MenuItem()});
+            contextMenu.MenuItems[3].Text = "Exit";
+            contextMenu.MenuItems[3].Click += (o, s) => { Application.ExitThread(); };
+            contextMenu.MenuItems[2].Text = "Settings";
+            contextMenu.MenuItems[2].Click += (o, s) => { new SettingsForm().Show(this); };
             contextMenu.MenuItems[1].Text = "Pair a new device";
             contextMenu.MenuItems[1].Click += PairingButton_Click;
             contextMenu.MenuItems[0].Text = "Edit keybase";
