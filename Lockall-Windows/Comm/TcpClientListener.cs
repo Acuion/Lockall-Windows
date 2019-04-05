@@ -40,7 +40,7 @@ namespace Lockall_Windows.Comm
             return result;
         }
 
-        public override async Task<string> ReadAndDecryptClientMessage(byte[] secondComponent)
+        public override async Task<string> ReadClientMessage(byte[] secondComponent)
         {
             var client = await _listener.AcceptTcpClientAsync(); // todo: timeout
             return DecryptClientMessage(client.GetStream(), secondComponent);

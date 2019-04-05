@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using InTheHand.Net;
@@ -43,12 +44,12 @@ namespace Lockall_Windows.Comm
             return result;
         }
 
-        public override Task<string> ReadAndDecryptClientMessage(byte[] secondComponent)
+        public override Task<string> ReadAndDecryptClientMessage(CngKey privateKey)
         {
             var task = new Task<string>(() =>
             {
                 var client = _listener.AcceptBluetoothClient();
-                return DecryptClientMessage(client.GetStream(), secondComponent);
+                return DecryptMessage(privateKey, client.GetStream());
             });
             task.Start();
             return task;

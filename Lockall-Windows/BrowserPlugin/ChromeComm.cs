@@ -27,7 +27,7 @@ namespace Lockall_Windows.BrowserPlugin
                 var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, secondComponent);
                 string qrBodyAsBase64 = Convert.ToBase64String(qrBody);
                 await Send($"SHOW:{prefix}:{qrBodyAsBase64}");
-                var result = await comm.ReadAndDecryptClientMessage(secondComponent); // todo: trycatches everywhere
+                var result = await comm.ReadClientMessage(secondComponent); // todo: trycatches everywhere
                 await Send("CLOSE");
                 System.Threading.Thread.Sleep(1000);
                 return JsonConvert.DeserializeObject<T>(result);
