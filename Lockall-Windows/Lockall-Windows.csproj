@@ -74,7 +74,6 @@
     <Compile Include="Comm\BluetoothClientListener.cs" />
     <Compile Include="Comm\ClientListener.cs" />
     <Compile Include="Comm\TcpClientListener.cs" />
-    <Compile Include="EncryptionUtils.cs" />
     <Compile Include="Forms\FirstComponenForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -32,26 +32,18 @@ namespace Lockall_Windows.Comm
                         Mode = CipherMode.CBC,
                         Padding = PaddingMode.PKCS7
                     })
+                    using (var mobilePublic = CngKey.Import(todo, CngKeyBlobFormat.EccPublicBlob))
+                    using (var encryptor = aesManaged.CreateDecryptor(ecdh.DeriveKeyMaterial(mobilePublic), iv))
+                    using (var msEncrypt = new MemoryStream())
+                    using (var csEncrypt =
+                        new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (var mobilePublic = CngKey.Import(todo, CngKeyBlobFormat.EccPublicBlob))
+                        using (var swEncrypt = new BinaryWriter(csEncrypt))
                         {
-                            using (var encryptor = aesManaged.CreateDecryptor(ecdh.DeriveKeyMaterial(mobilePublic), iv))
-                            {
-                                using (var msEncrypt = new MemoryStream())
-                                {
-                                    using (var csEncrypt =
-                                        new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                                    {
-                                        using (var swEncrypt = new BinaryWriter(csEncrypt))
-                                        {
-                                            swEncrypt.Write(inputStream.ReadBytes(msgLen));
-                                        }
-
-                                        return Encoding.UTF8.GetString(msEncrypt.ToArray());
-                                    }
-                                }
-                            }
+                            swEncrypt.Write(inputStream.ReadBytes(msgLen));
                         }
+
+                        return Encoding.UTF8.GetString(msEncrypt.ToArray());
                     }
                 }
             }

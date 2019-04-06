@@ -18,50 +18,26 @@ namespace Lockall_Windows
             {
                 var data = "LOCKALL:" + prefix + ":" + Convert.ToBase64String(source);
                 using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q))
+                using (QRCode qrCode = new QRCode(qrCodeData))
                 {
-                    using (QRCode qrCode = new QRCode(qrCodeData))
-                    {
-                        using (MemoryStream memory = new MemoryStream())
-                        {
-                            return qrCode.GetGraphic(20);
-                        }
-                    }
+                    return qrCode.GetGraphic(20);
                 }
             }
         }
 
         public static byte[] BuildQrBody(ClientListener responseTo, string qrUserContentJson,
-            byte[] secondComponent, bool attachFirstComponent = false)
+            byte[] pcPublicEcdh, bool attachFirstComponent = false)
         {
-            var firstComponent = ComponentsManager.ComputeDeterminedFirstComponent();
-
             var qrBody = new List<byte>();
-            if (attachFirstComponent)
-            {
-                qrBody.Add(1); // unsafe, with fc
-                qrBody.AddRange(BitConverter.GetBytes(firstComponent.Length));
-                qrBody.AddRange(firstComponent);
-            }
-            else
-            {
-                qrBody.Add(0); // safe
-            }
-            qrBody.AddRange(BitConverter.GetBytes(secondComponent.Length));
-            qrBody.AddRange(secondComponent);
-
-            var iv = EncryptionUtils.Generate128BitIv();
-            var key = EncryptionUtils.Produce256BitFromComponents(firstComponent, secondComponent);
-
-            qrBody.AddRange(iv);
+            qrBody.AddRange(BitConverter.GetBytes(pcPublicEcdh.Length));
+            qrBody.AddRange(pcPublicEcdh);
 
             var userData = new List<byte>();
             userData.AddRange(responseTo.ComputeHeader());
             userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
 
-            var encryptedUserData = EncryptionUtils.EncryptDataWithAes256(userData.ToArray(), key, iv);
-
-            qrBody.AddRange(BitConverter.GetBytes(encryptedUserData.Length));
-            qrBody.AddRange(encryptedUserData);
+            qrBody.AddRange(BitConverter.GetBytes(userData.Count));
+            qrBody.AddRange(userData);
 
             return qrBody.ToArray();
         }

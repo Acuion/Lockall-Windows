@@ -35,18 +35,18 @@ namespace Lockall_Windows.Forms
         {
             using (var pcKey = CngKey.Create(CngAlgorithm.ECDiffieHellmanP521))
             {
-                    using (var comm = NewClientListener())
-                    {
-                        // todo: сгенерировать половину ecdh, показать её + запрос, получить вторую половину и ответ, посчитать ключ, расшифровать, вернуть
-                        var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, pcKey.Export(CngKeyBlobFormat.EccPublicBlob),
-                            attachFirstComponent);
+                using (var comm = NewClientListener())
+                {
+                    // todo: сгенерировать половину ecdh, показать её + запрос, получить вторую половину и ответ, посчитать ключ, расшифровать, вернуть
+                    var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, pcKey.Export(CngKeyBlobFormat.EccPublicBlob),
+                        attachFirstComponent);
 
-                        ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
-                        var result = await comm.ReadAndDecryptClientMessage();
-                        Close();
-                        return JsonConvert.DeserializeObject<T>(result);
-                    }
+                    ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
+                    var result = await comm.ReadAndDecryptClientMessage(pcKey);
+                    Close();
+                    return JsonConvert.DeserializeObject<T>(result);
                 }
+            }
         }
     }
 }

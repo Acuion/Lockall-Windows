@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,10 +41,10 @@ namespace Lockall_Windows.Comm
             return result;
         }
 
-        public override async Task<string> ReadClientMessage(byte[] secondComponent)
+        public override async Task<string> ReadAndDecryptClientMessage(CngKey privateKey)
         {
-            var client = await _listener.AcceptTcpClientAsync(); // todo: timeout
-            return DecryptClientMessage(client.GetStream(), secondComponent);
+            var client = await _listener.AcceptTcpClientAsync();
+            return DecryptMessage(privateKey, client.GetStream());
         }
 
         public override void Dispose()
