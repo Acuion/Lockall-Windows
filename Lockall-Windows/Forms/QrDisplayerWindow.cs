@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Lockall_Windows.Comm;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Lockall_Windows.Forms
 {
