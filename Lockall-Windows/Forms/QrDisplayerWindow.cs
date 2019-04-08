@@ -32,15 +32,14 @@ namespace Lockall_Windows.Forms
             return new BluetoothClientListener();
         }
 
-        public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson, bool attachFirstComponent = false)
+        public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson)
         {
-            using (var pcKey = CngKey.Create(CngAlgorithm.ECDiffieHellmanP521))
+            using (var pcKey = CngKey.Create(CngAlgorithm.ECDiffieHellmanP384))
             {
                 using (var comm = NewClientListener())
                 {
                     // todo: сгенерировать половину ecdh, показать её + запрос, получить вторую половину и ответ, посчитать ключ, расшифровать, вернуть
-                    var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, pcKey.Export(CngKeyBlobFormat.EccPublicBlob),
-                        attachFirstComponent);
+                    var qrBody = QrBuilder.BuildQrBody(comm, qrUserContentJson, EncryptionUtils.EccPublicToPem(pcKey));
 
                     ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                     var result = await comm.ReadAndDecryptClientMessage(pcKey);

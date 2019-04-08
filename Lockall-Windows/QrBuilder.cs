@@ -26,7 +26,7 @@ namespace Lockall_Windows
         }
 
         public static byte[] BuildQrBody(ClientListener responseTo, string qrUserContentJson,
-            byte[] pcPublicEcdh, bool attachFirstComponent = false)
+            byte[] pcPublicEcdh)
         {
             var qrBody = new List<byte>();
             qrBody.AddRange(BitConverter.GetBytes(pcPublicEcdh.Length));

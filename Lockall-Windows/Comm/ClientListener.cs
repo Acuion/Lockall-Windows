@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,9 @@ namespace Lockall_Windows.Comm
         {
             using (var inputStream = new BinaryReader(message))
             {
+                var ecdhKeyLen = inputStream.ReadInt32();
+                var ecdhKeyBytes = inputStream.ReadBytes(ecdhKeyLen);
+
                 var iv = inputStream.ReadBytes(16);
                 var msgLen = inputStream.ReadInt32();
 
@@ -32,7 +36,7 @@ namespace Lockall_Windows.Comm
                         Mode = CipherMode.CBC,
                         Padding = PaddingMode.PKCS7
                     })
-                    using (var mobilePublic = CngKey.Import(todo, CngKeyBlobFormat.EccPublicBlob))
+                    using (var mobilePublic = CngKey.Import(EncryptionUtils.PemToEccBlob(ecdhKeyBytes), CngKeyBlobFormat.EccPublicBlob))
                     using (var encryptor = aesManaged.CreateDecryptor(ecdh.DeriveKeyMaterial(mobilePublic), iv))
                     using (var msEncrypt = new MemoryStream())
                     using (var csEncrypt =

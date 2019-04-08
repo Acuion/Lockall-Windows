@@ -14,7 +14,7 @@ using WebSocketSharp.Server;
 
 namespace Lockall_Windows.BrowserPlugin
 {
-    class ChromeComm : WebSocketBehavior
+    /*class ChromeComm : WebSocketBehavior
     {
         public static ChromeComm ChromeConnection;
 
@@ -45,5 +45,5 @@ namespace Lockall_Windows.BrowserPlugin
             ChromeConnection = this;
             return base.OnOpen();
         }
-    }
+    }*/
 }
