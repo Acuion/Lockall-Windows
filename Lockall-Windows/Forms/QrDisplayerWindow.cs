@@ -45,13 +45,13 @@ namespace Lockall_Windows.Forms
                     {
                         Close();
 
-                        var aes256Key = ClientListener.CompleteEcdhFromStream(pcKey, commStream); // todo: refactor
+                        var aes256Key = ClientListener.CompleteEcdhFromStream(pcKey, commStream);
 
                         qrUserContentJson.Start();
                         var content = await qrUserContentJson;
                         if (content == null)
                         {
-                            throw new Exception("No content");
+                            throw new Exception("No content"); // todo
                         }
                         ClientListener.SendEncrypted(Encoding.UTF8.GetBytes(content), aes256Key, commStream);
 
