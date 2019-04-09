@@ -16,7 +16,7 @@ namespace Lockall_Windows.Comm
 
         public static byte[] CompleteEcdhFromStream(CngKey pcPrivate, Stream message)
         {
-            using (var inputStream = new BinaryReader(message))
+            using (var inputStream = new BinaryReader(message, Encoding.UTF8, true))
             {
                 var ecdhKeyLen = inputStream.ReadInt32();
                 var ecdhKeyBytes = inputStream.ReadBytes(ecdhKeyLen);
@@ -37,7 +37,7 @@ namespace Lockall_Windows.Comm
 
         public static string DecryptMessage(byte[] aes256Key, Stream message)
         {
-            using (var inputStream = new BinaryReader(message))
+            using (var inputStream = new BinaryReader(message, Encoding.UTF8, true))
             {
                 var iv = inputStream.ReadBytes(16);
                 var msgLen = inputStream.ReadInt32();
@@ -48,13 +48,14 @@ namespace Lockall_Windows.Comm
 
         public static void SendEncrypted(byte[] message, byte[] aes256Key, Stream to)
         {
-            using (var outputStream = new BinaryWriter(to))
+            using (var outputStream = new BinaryWriter(to, Encoding.UTF8, true))
             {
                 var iv = EncryptionUtils.Generate128BitIv();
                 outputStream.Write(iv);
-                outputStream.Write(message.Length);
-
-                outputStream.Write(EncryptionUtils.EncryptDataWithAes256(message, aes256Key, iv));
+                
+                var encrypted = EncryptionUtils.EncryptDataWithAes256(message, aes256Key, iv);
+                outputStream.Write(encrypted.Length);
+                outputStream.Write(encrypted);
             }
         }
     }
