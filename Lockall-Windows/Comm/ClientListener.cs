@@ -11,45 +11,50 @@ namespace Lockall_Windows.Comm
     public abstract class ClientListener : IDisposable
     {
         public abstract List<byte> ComputeHeader();
-        public abstract Task<string> ReadAndDecryptClientMessage(CngKey privateKey);
+        public abstract Task<Stream> GetStream();
         public abstract void Dispose();
 
-        protected string DecryptMessage(CngKey pcPrivate, Stream message)
+        public static byte[] CompleteEcdhFromStream(CngKey pcPrivate, Stream message)
         {
             using (var inputStream = new BinaryReader(message))
             {
                 var ecdhKeyLen = inputStream.ReadInt32();
                 var ecdhKeyBytes = inputStream.ReadBytes(ecdhKeyLen);
 
-                var iv = inputStream.ReadBytes(16);
-                var msgLen = inputStream.ReadInt32();
-
                 using (var ecdh = new ECDiffieHellmanCng(pcPrivate))
                 {
                     ecdh.HashAlgorithm = CngAlgorithm.Sha256;
                     ecdh.KeyDerivationFunction = ECDiffieHellmanKeyDerivationFunction.Hash;
 
-                    using (var aesManaged = new RijndaelManaged
+                    using (var mobilePublic = CngKey.Import(EncryptionUtils.PemToEccBlob(ecdhKeyBytes),
+                        CngKeyBlobFormat.EccPublicBlob))
                     {
-                        KeySize = 256,
-                        BlockSize = 128,
-                        Mode = CipherMode.CBC,
-                        Padding = PaddingMode.PKCS7
-                    })
-                    using (var mobilePublic = CngKey.Import(EncryptionUtils.PemToEccBlob(ecdhKeyBytes), CngKeyBlobFormat.EccPublicBlob))
-                    using (var encryptor = aesManaged.CreateDecryptor(ecdh.DeriveKeyMaterial(mobilePublic), iv))
-                    using (var msEncrypt = new MemoryStream())
-                    using (var csEncrypt =
-                        new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (var swEncrypt = new BinaryWriter(csEncrypt))
-                        {
-                            swEncrypt.Write(inputStream.ReadBytes(msgLen));
-                        }
-
-                        return Encoding.UTF8.GetString(msEncrypt.ToArray());
+                        return ecdh.DeriveKeyMaterial(mobilePublic);
                     }
                 }
+            }
+        }
+
+        public static string DecryptMessage(byte[] aes256Key, Stream message)
+        {
+            using (var inputStream = new BinaryReader(message))
+            {
+                var iv = inputStream.ReadBytes(16);
+                var msgLen = inputStream.ReadInt32();
+
+                return Encoding.UTF8.GetString(EncryptionUtils.DecryptDataWithAes256(inputStream.ReadBytes(msgLen), aes256Key, iv));
+            }
+        }
+
+        public static void SendEncrypted(byte[] message, byte[] aes256Key, Stream to)
+        {
+            using (var outputStream = new BinaryWriter(to))
+            {
+                var iv = EncryptionUtils.Generate128BitIv();
+                outputStream.Write(iv);
+                outputStream.Write(message.Length);
+
+                outputStream.Write(EncryptionUtils.EncryptDataWithAes256(message, aes256Key, iv));
             }
         }
     }

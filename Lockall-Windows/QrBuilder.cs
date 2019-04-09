@@ -25,7 +25,7 @@ namespace Lockall_Windows
             }
         }
 
-        public static byte[] BuildQrBody(ClientListener responseTo, string qrUserContentJson,
+        public static byte[] BuildQrBody(ClientListener responseTo,
             byte[] pcPublicEcdh)
         {
             var qrBody = new List<byte>();
@@ -34,7 +34,6 @@ namespace Lockall_Windows
 
             var userData = new List<byte>();
             userData.AddRange(responseTo.ComputeHeader());
-            userData.AddRange(Encoding.UTF8.GetBytes(qrUserContentJson));
 
             qrBody.AddRange(BitConverter.GetBytes(userData.Count));
             qrBody.AddRange(userData);

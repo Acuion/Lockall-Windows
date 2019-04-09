@@ -41,10 +41,10 @@ namespace Lockall_Windows.Comm
             return result;
         }
 
-        public override async Task<string> ReadAndDecryptClientMessage(CngKey privateKey)
+        public override async Task<Stream> GetStream()
         {
             var client = await _listener.AcceptTcpClientAsync();
-            return DecryptMessage(privateKey, client.GetStream());
+            return client.GetStream();
         }
 
         public override void Dispose()
