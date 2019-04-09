@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Lockall_Windows.BrowserPlugin;
 using Lockall_Windows.Forms;
@@ -88,7 +89,7 @@ namespace Lockall_Windows
             }*/
 
             var load = new QrDisplayerWindow("OTP");
-            load.ShowQrForAJsonResult<MessageWithPassword>("OTP", "{}").ContinueWith(result =>
+            load.ShowQrForAJsonResult<MessageWithPassword>("OTP", new Task<string>(() => "{}")).ContinueWith(result =>
             {
                 SendKeys.SendWait(result.Result.password);
             });
@@ -113,8 +114,8 @@ namespace Lockall_Windows
 
             var load = new QrDisplayerWindow("PULL");
             load.ShowQrForAJsonResult<MessageWithPassword>("PULL",
-                JsonConvert.SerializeObject(
-                    new MessageWithResourceid(winHeader))).ContinueWith(result =>
+                new Task<string>(() => JsonConvert.SerializeObject(
+                    new MessageWithResourceid(winHeader)))).ContinueWith(result =>
             {
                 SendKeys.SendWait(result.Result.password);
             });
@@ -124,26 +125,28 @@ namespace Lockall_Windows
         private void _passCreate_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             var winHeader = TitleGetter.GetActiveWindowTitle();
-
-            var passAsker = new PasswordGetterForm(winHeader);
-            var res = passAsker.ShowDialog();
-            if (res == DialogResult.OK)
+            // todo
+            /*if (winHeader.EndsWith("Google Chrome") && ChromeComm.ChromeConnection != null)
             {
-                // todo
-                /*if (winHeader.EndsWith("Google Chrome") && ChromeComm.ChromeConnection != null)
-                {
-                    ChromeComm.ChromeConnection.ShowQrInBrowserForAJsonResult<MessageStatus>("STORE",
-                        JsonConvert.SerializeObject(
-                            new MessageWithPassword("", passAsker.PasswordResult))).ContinueWith(result => { });
-                    return;
-                }*/
-
-                var create = new QrDisplayerWindow("STORE");
-                create.ShowQrForAJsonResult<MessageStatus>("STORE",
+                ChromeComm.ChromeConnection.ShowQrInBrowserForAJsonResult<MessageStatus>("STORE",
                     JsonConvert.SerializeObject(
-                        new MessageWithPassword(winHeader, passAsker.PasswordResult))).ContinueWith(result => { });
-                create.Show();
-            }
+                        new MessageWithPassword("", passAsker.PasswordResult))).ContinueWith(result => { });
+                return;
+            }*/
+
+            var create = new QrDisplayerWindow("STORE");
+            create.ShowQrForAJsonResult<MessageStatus>("STORE", new Task<string>(() =>
+                {
+                    var passAsker = new PasswordGetterForm(winHeader);
+                    var res = passAsker.ShowDialog();
+                    if (res != DialogResult.OK)
+                    {
+                        return null;
+                    }
+                    return JsonConvert.SerializeObject(
+                        new MessageWithPassword(winHeader, passAsker.PasswordResult));
+                })).ContinueWith(result => { });
+            create.Show();
         }
 
         private void FirstComponentForm_FormClosing(object sender, FormClosingEventArgs e)

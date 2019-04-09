@@ -32,7 +32,7 @@ namespace Lockall_Windows.Forms
             return new BluetoothClientListener();
         }
 
-        public async Task<T> ShowQrForAJsonResult<T>(string prefix, string qrUserContentJson) where T: class
+        public async Task<T> ShowQrForAJsonResult<T>(string prefix, Task<string> qrUserContentJson) where T: class
         {
             using (var pcKey = CngKey.Create(CngAlgorithm.ECDiffieHellmanP384))
             {
@@ -43,11 +43,18 @@ namespace Lockall_Windows.Forms
                     ImageQr.Image = QrBuilder.CreateQrFromBytes(prefix, qrBody.ToArray());
                     using (var commStream = await comm.GetStream())
                     {
+                        Close();
+
                         var aes256Key = ClientListener.CompleteEcdhFromStream(pcKey, commStream); // todo: refactor
 
-                        ClientListener.SendEncrypted(Encoding.UTF8.GetBytes(qrUserContentJson), aes256Key, commStream);
+                        qrUserContentJson.Start();
+                        var content = await qrUserContentJson;
+                        if (content == null)
+                        {
+                            throw new Exception("No content");
+                        }
+                        ClientListener.SendEncrypted(Encoding.UTF8.GetBytes(content), aes256Key, commStream);
 
-                        Close();
                         return JsonConvert.DeserializeObject<T>(ClientListener.DecryptMessage(aes256Key, commStream));
                     }
                 }
