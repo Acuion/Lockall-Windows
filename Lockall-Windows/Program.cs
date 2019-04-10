@@ -84,7 +84,7 @@ namespace Lockall_Windows
         {
             CreateConnector().ShowQrForAJsonResult<MessageWithPassword>("OTP", new Task<string>(() => "{}")).ContinueWith(result =>
             {
-                if (result != null)
+                if (result.Result != null)
                 {
                     SendKeys.SendWait(result.Result.password);
                 }
@@ -99,7 +99,7 @@ namespace Lockall_Windows
                 new Task<string>(() => JsonConvert.SerializeObject(
                     new MessageWithResourceid(winHeader)))).ContinueWith(result =>
                     {
-                        if (result != null)
+                        if (result.Result != null)
                         {
                             SendKeys.SendWait(result.Result.password);
                         }
