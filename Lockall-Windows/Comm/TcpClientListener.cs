@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lockall_Windows.Comm
 {
     class TcpClientListener : ClientListener
     {
-        TcpListener _listener;
+        readonly TcpListener _listener;
 
         private int ListensAtPort => ((IPEndPoint)_listener.LocalEndpoint).Port;
         private byte[] ListensAtIp { get; }
@@ -34,8 +32,8 @@ namespace Lockall_Windows.Comm
 
         public override List<byte> ComputeHeader()
         {
-            List<byte> result = new List<byte>();
-            result.Add(1); // wifi
+            List<byte> result = new List<byte> {1};
+            // wifi
             result.AddRange(ListensAtIp);
             result.AddRange(BitConverter.GetBytes(ListensAtPort));
             return result;

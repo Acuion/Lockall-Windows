@@ -25,7 +25,7 @@ namespace Lockall_Windows.WinUtils
             public Window()
             {
                 // create the handle for the window.
-                this.CreateHandle(new CreateParams());
+                CreateHandle(new CreateParams());
             }
 
             /// <summary>
@@ -44,8 +44,7 @@ namespace Lockall_Windows.WinUtils
                     ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
 
                     // invoke the event to notify the parent.
-                    if (KeyPressed != null)
-                        KeyPressed(this, new KeyPressedEventArgs(modifier, key));
+                    KeyPressed?.Invoke(this, new KeyPressedEventArgs(modifier, key));
                 }
             }
 
@@ -55,13 +54,13 @@ namespace Lockall_Windows.WinUtils
 
             public void Dispose()
             {
-                this.DestroyHandle();
+                DestroyHandle();
             }
 
             #endregion
         }
 
-        private Window _window = new Window();
+        private readonly Window _window = new Window();
         private int _currentId;
 
         public KeyboardHook()
@@ -69,8 +68,7 @@ namespace Lockall_Windows.WinUtils
             // register the event of the inner native window.
             _window.KeyPressed += delegate (object sender, KeyPressedEventArgs args)
             {
-                if (KeyPressed != null)
-                    KeyPressed(this, args);
+                KeyPressed?.Invoke(this, args);
             };
         }
 
@@ -116,24 +114,15 @@ namespace Lockall_Windows.WinUtils
     /// </summary>
     public class KeyPressedEventArgs : EventArgs
     {
-        private ModifierKeys _modifier;
-        private Keys _key;
-
         internal KeyPressedEventArgs(ModifierKeys modifier, Keys key)
         {
-            _modifier = modifier;
-            _key = key;
+            Modifier = modifier;
+            Key = key;
         }
 
-        public ModifierKeys Modifier
-        {
-            get { return _modifier; }
-        }
+        public ModifierKeys Modifier { get; }
 
-        public Keys Key
-        {
-            get { return _key; }
-        }
+        public Keys Key { get; }
     }
 
     /// <summary>

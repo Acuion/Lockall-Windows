@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using InTheHand.Net;
@@ -12,8 +11,8 @@ namespace Lockall_Windows.Comm
 {
     public class BluetoothClientListener : ClientListener
     {
-        private Guid _bluetoothGuid;
-        private BluetoothListener _listener;
+        private readonly Guid _bluetoothGuid;
+        private readonly BluetoothListener _listener;
 
         public BluetoothClientListener()
         {
@@ -36,8 +35,8 @@ namespace Lockall_Windows.Comm
 
         public override List<byte> ComputeHeader()
         {
-            List<byte> result = new List<byte>();
-            result.Add(2); // bluetooth
+            List<byte> result = new List<byte> {2};
+            // bluetooth
             var mac = Encoding.UTF8.GetBytes(GetBtMacAddress().ToString("C"));
             result.AddRange(mac);
             var uuid = Encoding.UTF8.GetBytes(_bluetoothGuid.ToString());

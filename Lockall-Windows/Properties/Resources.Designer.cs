@@ -59,5 +59,15 @@ namespace Lockall_Windows.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon app {
+            get {
+                object obj = ResourceManager.GetObject("app", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }
