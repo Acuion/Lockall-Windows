@@ -39,7 +39,7 @@ namespace Lockall_Windows.Comm
         {
             using (var inputStream = new BinaryReader(message, Encoding.UTF8, true))
             {
-                var iv = inputStream.ReadBytes(16);
+                var iv = inputStream.ReadBytes(16); // todo: wait for a time
                 var msgLen = inputStream.ReadInt32();
 
                 return Encoding.UTF8.GetString(EncryptionUtils.DecryptDataWithAes256(inputStream.ReadBytes(msgLen), aes256Key, iv));
